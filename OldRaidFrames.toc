@@ -1,0 +1,34 @@
+## Interface: 11509, 11507, 20506, 16001, 120105
+## Title: OldRaidFrames
+## IconTexture: Interface\AddOns\OldRaidFrames\icon.png
+## Notes: Faithful recreation of the pre-1.15.9 Classic Era compact raid frames (Wrath-style CUF look), for raids and parties. Classic Era, TBC Anniversary, WoW Forever and Retail.
+## Author: Zac
+## Version: 1.0.0
+## OptionalDeps: Clique, WeakAuras
+## SavedVariables: OldRaidFramesDB
+
+# 1.15.9 API shim - must load before the libraries so aura lookups work.
+Compat.lua
+
+# Embedded heal prediction. LibHealPredict-1.0 derives incoming heals from
+# native Blizzard APIs (UnitGetIncomingHeals, aura data, combat log, cast
+# events) - no addon messages, no coordinator, so it works regardless of what
+# the rest of the raid is running; LibStub keeps only the newest copy active
+# when several addons embed it.
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibHealPredict-1.0\LibHealPredict-1.0.lua
+
+# Profile storage (AceDB-3.0) and profile sharing (AceSerializer-3.0).
+# Both need LibStub + CallbackHandler-1.0 above them. ChatThrottleLib paces
+# the chunked profile-send traffic in Profiles.lua (it used to arrive with
+# LibHealComm-4.0, which no longer ships here).
+Libs\ChatThrottleLib\ChatThrottleLib.lua
+Libs\AceDB-3.0\AceDB-3.0.lua
+Libs\AceSerializer-3.0\AceSerializer-3.0.lua
+
+OldRaidFrames.lua
+
+# Profile manager: named account-wide profiles, per-character selection,
+# copy/reset/delete, export & import strings, in-game profile sending.
+Profiles.lua
