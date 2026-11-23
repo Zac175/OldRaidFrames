@@ -1,0 +1,14 @@
+OldRaidFrames - Changelog
+=========================
+
+v1.1.0 (2026-11-22)
+- WoW Forever and Retail: the addon now loads and works there as well
+  as on Classic Era and Burning Crusade Anniversary - one folder, the
+  same files. Those clients hide some values from addons during a
+  fight; the README's "WoW Forever and Retail" section lists what goes
+  quiet until the value can be read again.
+- Party frames: the same frames for a 5-player group, under a gold
+  "Party" title where Group 1 stands in a raid. Display Party Frames
+  and Show Yourself in Party in /orf (or /orf party, /orf partyplayer).
+- Fixed on WoW Forever: an error from the heal prediction library when
+  it loaded before the game's own aura reader existed.

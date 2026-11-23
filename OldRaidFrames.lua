@@ -30,7 +30,7 @@
 --------------------------------------------------------------------------------
 
 local ADDON_NAME, ns = ...
-local VERSION = "1.0.0"
+local VERSION = "1.1.0"
 local db   -- active profile table; re-pointed by ns.SetDB on a profile switch
 
 -- the modern clients (WoW Forever, Retail) have issecretvalue; Era and TBC
