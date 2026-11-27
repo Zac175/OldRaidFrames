@@ -3,7 +3,7 @@
 ## IconTexture: Interface\AddOns\OldRaidFrames\icon.png
 ## Notes: Faithful recreation of the pre-1.15.9 Classic Era compact raid frames (Wrath-style CUF look), for raids and parties. Classic Era, TBC Anniversary, WoW Forever and Retail.
 ## Author: Zac
-## Version: 1.1.0
+## Version: 1.1.1
 ## X-Curse-Project-ID: 1647769
 ## OptionalDeps: Clique, WeakAuras
 ## SavedVariables: OldRaidFramesDB

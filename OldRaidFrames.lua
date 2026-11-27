@@ -30,7 +30,7 @@
 --------------------------------------------------------------------------------
 
 local ADDON_NAME, ns = ...
-local VERSION = "1.1.0"
+local VERSION = "1.1.1"
 local db   -- active profile table; re-pointed by ns.SetDB on a profile switch
 
 -- the modern clients (WoW Forever, Retail) have issecretvalue; Era and TBC
@@ -2471,6 +2471,27 @@ local function BuildOptionsPanel()
     panelWidgets.profBtn = profBtn
     if not ns.Profiles then profBtn:Hide() end
 
+    -- THE SITE (2026-11-24): the two links as buttons, in the room right of
+    -- the rows above (the window is not made taller for them). The same as
+    -- /orf report and /orf suggest: a link to copy into a browser.
+    local function SiteButton(text, y, word, tipTitle)
+        local b = CreateFrame("Button", nil, p, "UIPanelButtonTemplate")
+        b:SetSize(64, 24)
+        b:SetPoint("TOPLEFT", p, "TOPLEFT", 320, y)
+        b:SetText(text)
+        b:SetScript("OnClick", function() SlashCmdList.OLDRAIDFRAMES(word) end)
+        b:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(tipTitle)
+            GameTooltip:AddLine("Gives you a link to copy into your browser.", 1, 1, 1, true)
+            GameTooltip:Show()
+        end)
+        b:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        return b
+    end
+    panelWidgets.reportBtn = SiteButton("Report", afterBoxes, "report", "Report a problem")
+    panelWidgets.suggestBtn = SiteButton("Suggest", afterBoxes - 28, "suggest", "Suggest a feature")
+
     local hint = p:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     hint:SetPoint("BOTTOM", p, "BOTTOM", 0, 8)
     hint:SetText("/orf toggles this panel  --  /orf help for slash commands")
@@ -2938,6 +2959,87 @@ local SLASH_TOGGLES = {
     healaoe     = { key = "healPredictAoE",  label = "heal prediction: group heals" },
 }
 
+-- ============================================================
+-- THE SITE: newest version, what changed, bug reports, suggestions.
+-- An addon cannot open a link, so it is put in a box, selected, to copy.
+-- The link carries this addon, its version and the game version, so the
+-- site's form opens already filled in.
+-- ============================================================
+local ShowSite   -- ShowSite("report" | "suggest" | "site") -> the link
+do -- SITE LINK
+    local SITE = "https://zac175.github.io/"
+    local ADDON_ID = "defaultframes"
+    local DIALOG = "OLDRAIDFRAMES_SITE"
+    local TITLES = {
+        report = "Report a problem with OldRaidFrames",
+        suggest = "Suggest a feature for OldRaidFrames",
+        site = "OldRaidFrames: newest version and what changed",
+    }
+    local shownLink
+
+    local function Game()
+        local pid = WOW_PROJECT_ID
+        if pid == 1 then return "retail" elseif pid == 2 then return "era" elseif pid == 5 then return "tbc" elseif pid == 18 then return "forever" end
+        local build = GetBuildInfo and tonumber((select(4, GetBuildInfo()))) or 0
+        if build >= 100000 then return "retail" end
+        if build >= 20000 and build < 30000 then return "tbc" end
+        if build >= 16000 and build < 20000 then return "forever" end
+        return "era"
+    end
+
+    local function Link(kind)
+        if kind == "report" then
+            return SITE .. "#/report?addon=" .. ADDON_ID .. "&v=" .. tostring(VERSION) .. "&game=" .. Game()
+        elseif kind == "suggest" then
+            return SITE .. "#/suggest?addon=" .. ADDON_ID .. "&game=" .. Game()
+        end
+        return SITE .. "#/changelog/" .. ADDON_ID
+    end
+
+    -- (the box is called editBox or EditBox, or handed out by GetEditBox, depending on the client)
+    local function BoxOf(dialog)
+        if type(dialog) ~= "table" then return nil end
+        return dialog.editBox or dialog.EditBox or (dialog.GetEditBox and dialog:GetEditBox()) or nil
+    end
+
+    local function Fill(eb)
+        if not (eb and shownLink) then return end
+        eb:SetText(shownLink)
+        if eb.SetCursorPosition then eb:SetCursorPosition(0) end
+        eb:HighlightText()
+    end
+
+    if StaticPopupDialogs then
+        StaticPopupDialogs[DIALOG] = {
+            text = "%s\nCtrl+C to copy, then paste it into your browser.",
+            button1 = CLOSE or "Close",
+            hasEditBox = true,
+            editBoxWidth = 340,
+            OnShow = function(self)
+                local eb = BoxOf(self)
+                Fill(eb)
+                if eb and eb.SetFocus then eb:SetFocus() end
+            end,
+            -- the link cannot be typed over
+            EditBoxOnTextChanged = function(eb)
+                if shownLink and eb:GetText() ~= shownLink then Fill(eb) end
+            end,
+            EditBoxOnEnterPressed = function() StaticPopup_Hide(DIALOG) end,
+            EditBoxOnEscapePressed = function() StaticPopup_Hide(DIALOG) end,
+            timeout = 0, whileDead = true, hideOnEscape = true, preferredIndex = 3,
+        }
+    end
+
+    ShowSite = function(kind)
+        if not TITLES[kind] then kind = "site" end
+        shownLink = Link(kind)
+        local shown = StaticPopup_Show and StaticPopupDialogs and StaticPopupDialogs[DIALOG] and StaticPopup_Show(DIALOG, TITLES[kind])
+        -- no box to be had (it is busy, or this client has none): the link goes to chat
+        if not shown then print("OldRaidFrames: " .. TITLES[kind] .. ": " .. shownLink) end
+        return shownLink
+    end
+end -- SITE LINK
+
 SLASH_OLDRAIDFRAMES1 = "/orf"
 SLASH_OLDRAIDFRAMES2 = "/oldraidframes"
 SlashCmdList.OLDRAIDFRAMES = function(msg)
@@ -2951,6 +3053,10 @@ SlashCmdList.OLDRAIDFRAMES = function(msg)
         ToggleOptionsPanel()
         return
     end
+
+    if cmd == "report" or cmd == "bug" then ShowSite("report") return end
+    if cmd == "suggest" or cmd == "idea" then ShowSite("suggest") return end
+    if cmd == "site" or cmd == "web" or cmd == "website" then ShowSite("site") return end
 
     if cmd == "profile" or cmd == "profiles" then
         if ns.Profiles then
@@ -3109,5 +3215,7 @@ SlashCmdList.OLDRAIDFRAMES = function(msg)
         Print("  /orf healthtext percent | value | lost | none  (lost = missing hp)")
         Print("  /orf profile  - profiles: share one layout across your characters,")
         Print("                  export/import strings, send to another player")
+        Print("  /orf report | suggest | site  - a link to report a problem, suggest a")
+        Print("                  feature, or see what changed")
     end
 end

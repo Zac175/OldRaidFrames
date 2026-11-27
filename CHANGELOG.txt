@@ -1,6 +1,12 @@
 OldRaidFrames - Changelog
 =========================
 
+v1.1.1 (2026-11-25)
+- The addon has a website for bug reports and feature suggestions:
+  /orf report and /orf suggest give you a link with your version and
+  game filled in, and /orf site opens the list of what changed.
+- Report and Suggest buttons in the options window do the same.
+
 v1.1.0 (2026-11-22)
 - WoW Forever and Retail: the addon now loads and works there as well
   as on Classic Era and Burning Crusade Anniversary - one folder, the
