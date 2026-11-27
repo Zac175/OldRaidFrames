@@ -30,7 +30,7 @@
 --------------------------------------------------------------------------------
 
 local ADDON_NAME, ns = ...
-local VERSION = "1.1.1"
+local VERSION = "1.1.2"
 local db   -- active profile table; re-pointed by ns.SetDB on a profile switch
 
 -- the modern clients (WoW Forever, Retail) have issecretvalue; Era and TBC
@@ -2967,7 +2967,7 @@ local SLASH_TOGGLES = {
 -- ============================================================
 local ShowSite   -- ShowSite("report" | "suggest" | "site") -> the link
 do -- SITE LINK
-    local SITE = "https://zac175.github.io/"
+    local SITE = "https://zacaddons.com/"
     local ADDON_ID = "defaultframes"
     local DIALOG = "OLDRAIDFRAMES_SITE"
     local TITLES = {

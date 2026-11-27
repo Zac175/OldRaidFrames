@@ -1,4 +1,4 @@
-# OldRaidFrames 1.1.1
+# OldRaidFrames 1.1.2
 
 Faithful recreation of the **pre-1.15.9 Classic Era compact raid frames** (the
 Wrath-derived CUF look), with a full options panel, pullout-style Main Tank

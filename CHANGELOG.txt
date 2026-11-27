@@ -1,6 +1,10 @@
 OldRaidFrames - Changelog
 =========================
 
+v1.1.2 (2026-11-27)
+- The website has a new address: zacaddons.com. /orf report,
+  /orf suggest, /orf site and the Report and Suggest buttons now open it.
+
 v1.1.1 (2026-11-25)
 - The addon has a website for bug reports and feature suggestions:
   /orf report and /orf suggest give you a link with your version and
